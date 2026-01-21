@@ -9,9 +9,13 @@ UserSettings/
 
 # Visual Studio / Rider
 .vs/
+.vscode/
 .idea/
 *.csproj
 *.sln
+.gitignore
+.vsconfig
+.htm
 
 # OS
 .DS_Store

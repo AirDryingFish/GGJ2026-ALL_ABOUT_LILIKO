@@ -45,7 +45,7 @@ namespace Yzz
 
         [Header("Respawn")]
         [Tooltip("当角色的 Y 坐标低于此值时，会被传回初始出生点")]
-        [SerializeField] private float respawnY = -100f;
+        [SerializeField] private float respawnY = -1000f;
 
         private Rigidbody2D _rb;
         private Collider2D _col;

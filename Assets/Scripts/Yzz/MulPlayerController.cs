@@ -54,6 +54,10 @@ namespace Yzz
         [Tooltip("The Mask Object to detect")]
         [SerializeField] private DraggableMask mask;
 
+        [Header("Sprite")]
+        [Tooltip("不指定则用同物体上的 SpriteRenderer；向左走时 flipX = true")]
+        [SerializeField] private SpriteRenderer[] spriteRenderers;
+
         // private Rigidbody2D _rb;
         // private Collider2D _col;
         private Rigidbody2D[] _rbs;
@@ -74,6 +78,11 @@ namespace Yzz
         /// <summary> 每次着地只允许起跳一次，防止接地判定连续为 true 时重复加跳跃力 </summary>
         private bool _hasJumpedSinceGrounded = true;
 
+        /// <summary> Model 层 / 动画层可读：当前速度 </summary>
+        public Vector2 Velocity => _rbs[curIndex] != null ? _rbs[curIndex].velocity : Vector2.zero;
+        /// <summary> Model 层 / 动画层可读：是否在地面 </summary>
+        public bool IsGroundedState => IsGrounded();
+
         private void InitPlayers()
         {
             if (groundLayers.Count() != players.Count())
@@ -82,6 +91,15 @@ namespace Yzz
             }
             _rbs = new Rigidbody2D[players.Count()];
             _cols = new Collider2D[players.Count()];
+            if (spriteRenderers == null)
+            {
+                
+                spriteRenderers = new SpriteRenderer[players.Count()];
+                for (int i = 0; i < players.Count(); i++)
+                {
+                    spriteRenderers[i] = players[i].GetComponentInChildren<SpriteRenderer>();
+                }
+            }
             
             for (int i = 0; i < players.Count(); i++)
             {
@@ -97,7 +115,9 @@ namespace Yzz
                 _rbs[i].gravityScale = gravityScale;
                 _rbs[i].interpolation = RigidbodyInterpolation2D.Interpolate;
                 _rbs[i].collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
             }
+            
             InitTransformOffsets();
             ChangeCur(0);
 
@@ -199,8 +219,30 @@ namespace Yzz
             else if (_coyoteCounter > 0f)
                 _coyoteCounter -= Time.deltaTime;
 
+            // 朝左走时 flipX，朝右走时不 flip
+            if (spriteRenderers != null)
+            {
+                
 
+                foreach (var sr in spriteRenderers)
+                {
+                    if (_inputX < 0f)
+                    {
+                        sr.flipX = true;
+                    } else if (_inputX > 0f) {
+                        sr.flipX = false;
+                    }
+                }
+                
+                
+            }
+
+            SyncTransform();
             
+        }
+
+        private void FixedUpdate()
+        {
             if (mask.isInMask(players[curIndex].transform.position))
             {
                 if (curIndex != 1)
@@ -211,10 +253,6 @@ namespace Yzz
                 if (curIndex != 0)
                 ChangeCur(0);
             }
-        }
-
-        private void FixedUpdate()
-        {
             // 跌落重生：低于阈值则传回初始位置并重置速度/计时
             if (players[curIndex].transform.position.y < respawnY)
             {
@@ -268,7 +306,7 @@ namespace Yzz
             else
                 _rbs[curIndex].gravityScale = gravityScale;
 
-            SyncTransform();
+            
         }
 
         private bool IsGrounded()

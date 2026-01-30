@@ -9,7 +9,7 @@ public class DraggableMask : MonoBehaviour
 {
     public Camera cam;
     private Vector3 _grabOffsetWorld;
-    private Vector3 _ori;
+    private Vector3 _ori_delta;
     [SerializeField]
     private Vector2 _delta=new();
     private Collider2D _collider;
@@ -26,22 +26,24 @@ public class DraggableMask : MonoBehaviour
 
     void OnMouseDown()
     {
-        _ori = Input.mousePosition;
+        _ori_delta = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        
     }
 
     void OnMouseDrag()
     {
         _isDragging = true;
-        _delta = cam.ScreenToWorldPoint(Input.mousePosition) - cam.ScreenToWorldPoint(_ori);
-        _ori = Input.mousePosition;
+        // _delta = cam.ScreenToWorldPoint(Input.mousePosition) - cam.ScreenToWorldPoint(_ori_delta);
+        // _ori_delta = Input.mousePosition;
 
-        transform.Translate(new Vector3(_delta.x, _delta.y, 0), Space.World);
+        // transform.Translate(new Vector3(_delta.x, _delta.y, 0), Space.World);
+        transform.position = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
     }
 
     void OnMouseUp() {
         _isDragging = false;
     }
-    public TMP_Text temp;
     void Update()
     {
         
@@ -49,7 +51,6 @@ public class DraggableMask : MonoBehaviour
 
     public bool isInMask(Vector2 worldPos)
     {
-        temp.text = worldPos.ToString();
         return _collider.OverlapPoint(worldPos);
     }
 }

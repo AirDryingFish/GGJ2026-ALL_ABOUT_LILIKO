@@ -25,7 +25,8 @@ namespace Yzz
         [SerializeField] private float lowJumpMultiplier = 1.6f;
 
         [Header("Ground Check")]
-        [SerializeField] private LayerMask groundLayer;
+        // [SerializeField] private LayerMask groundLayer;
+        [SerializeField] private LayerMask[] groundLayers;
         [Tooltip("脚下射线检测长度，只检测正下方的地面")]
         [SerializeField] private float groundCheckDistance = 0.2f;
         [SerializeField] private Vector2 groundCheckOffset = new Vector2(0f, -0.05f);
@@ -75,6 +76,10 @@ namespace Yzz
 
         private void InitPlayers()
         {
+            if (groundLayers.Count() != players.Count())
+            {
+                Debug.LogError($"GroundLayers(count:{groundLayers.Count()}) has different count as players(count:{players.Count()}) ");
+            }
             _rbs = new Rigidbody2D[players.Count()];
             _cols = new Collider2D[players.Count()];
             
@@ -125,11 +130,13 @@ namespace Yzz
                 rb.velocity = Vector2.zero;
                 rb.angularVelocity = 0f;
                 rb.bodyType = RigidbodyType2D.Kinematic;
+                rb.simulated = false;
             }
             curIndex = c;
             _rbs[curIndex].velocity = v;
             _rbs[curIndex].angularVelocity = av;
             _rbs[curIndex].bodyType = RigidbodyType2D.Dynamic;
+            _rbs[curIndex].simulated = true;
         }
         private void SyncTransform()
         {
@@ -193,10 +200,16 @@ namespace Yzz
                 _coyoteCounter -= Time.deltaTime;
 
 
-            // Temp test
-            if (Input.GetKeyDown(KeyCode.G))
+            
+            if (mask.isInMask(players[curIndex].transform.position))
             {
-                ChangeCur((curIndex + 1)%players.Count());
+                if (curIndex != 1)
+                ChangeCur(1);
+                
+            } else
+            {
+                if (curIndex != 0)
+                ChangeCur(0);
             }
         }
 
@@ -261,7 +274,7 @@ namespace Yzz
         private bool IsGrounded()
         {
             Vector2 origin = (Vector2)players[curIndex].transform.position + groundCheckOffset;
-            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, groundLayer);
+            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, groundLayers[curIndex]);
             if (!hit) return false;
             if (_cols[curIndex] != null && hit.collider == _cols[curIndex]) return false;
             // 只算“脚下方、表面朝上”的地面，贴墙时墙的法线是水平的，不会判成地面，避免卡墙不下落
@@ -276,7 +289,7 @@ namespace Yzz
             float extX = _cols[curIndex].bounds.extents.x;
             Vector2 origin = (Vector2)players[curIndex].transform.position + new Vector2(direction * extX, 0f);
             Vector2 dir = new Vector2(direction, 0f);
-            RaycastHit2D hit = Physics2D.Raycast(origin, dir, wallCheckDistance, groundLayer);
+            RaycastHit2D hit = Physics2D.Raycast(origin, dir, wallCheckDistance, groundLayers[curIndex]);
             if (!hit) return false;
             if (hit.collider == _cols[curIndex]) return false;
             return true;

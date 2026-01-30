@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -40,23 +41,15 @@ public class DraggableMask : MonoBehaviour
     void OnMouseUp() {
         _isDragging = false;
     }
-
+    public TMP_Text temp;
     void Update()
     {
-        // if (!_isDragging && (math.abs(_delta.x) > epsilon.x || math.abs(_delta.y) > epsilon.y))
-        // {
-        //     _delta = Vector2.Lerp(_delta, Vector2.zero, deceleration * Time.deltaTime);
-        //     if (math.abs(_delta.x) < epsilon.x && math.abs(_delta.y) < epsilon.y)
-        //     {
-        //         _delta = Vector2.zero;
-        //     }
-        //     transform.Translate(new Vector3(_delta.x, _delta.y, 0), Space.World);
-
-        // }
+        
     }
 
     public bool isInMask(Vector2 worldPos)
     {
+        temp.text = worldPos.ToString();
         return _collider.OverlapPoint(worldPos);
     }
 }

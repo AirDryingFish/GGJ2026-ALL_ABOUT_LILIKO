@@ -47,6 +47,10 @@ namespace Yzz
         [Tooltip("当角色的 Y 坐标低于此值时，会被传回初始出生点")]
         [SerializeField] private float respawnY = -100f;
 
+        [Header("MaskObject")]
+        [Tooltip("The Mask Object to detect")]
+        [SerializeField] private DraggableMask mask;
+
         private Rigidbody2D _rb;
         private Collider2D _col;
         private Vector2 _spawnPosition;
@@ -66,6 +70,11 @@ namespace Yzz
             _rb.gravityScale = gravityScale;
             _rb.interpolation = RigidbodyInterpolation2D.Interpolate;
             _rb.collisionDetectionMode = CollisionDetectionMode2D.Continuous;
+
+            if (mask == null)
+            {
+                Debug.LogError("Mask object is null");
+            }
         }
 
         private void Update()

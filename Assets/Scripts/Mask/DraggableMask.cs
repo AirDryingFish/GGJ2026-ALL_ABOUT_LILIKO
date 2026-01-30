@@ -41,7 +41,6 @@ public class DraggableMask : MonoBehaviour
     void OnMouseUp() {
         _isDragging = false;
     }
-    public TMP_Text temp;
     void Update()
     {
         
@@ -49,7 +48,6 @@ public class DraggableMask : MonoBehaviour
 
     public bool isInMask(Vector2 worldPos)
     {
-        temp.text = worldPos.ToString();
         return _collider.OverlapPoint(worldPos);
     }
 }

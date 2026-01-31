@@ -11,23 +11,26 @@ public class DraggableMask : MonoBehaviour
     private Vector3 _grabOffsetWorld;
     private Vector3 _ori_delta;
     [SerializeField]
-    private Vector2 _delta=new();
+    private Vector2 _delta = new();
     private Collider2D _collider;
     [SerializeField]
     private bool _isDragging = false;
+    private Rigidbody2D _rb;
 
-    public Vector2 epsilon = new(0.001f,0.001f);
+
+    public Vector2 epsilon = new(0.001f, 0.001f);
     public float deceleration = 12f;
 
     void Awake()
     {
         _collider = GetComponent<Collider2D>();
+        _rb = GetComponent<Rigidbody2D>();
     }
 
     void OnMouseDown()
     {
         _ori_delta = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        
+
     }
 
     void OnMouseDrag()
@@ -37,16 +40,18 @@ public class DraggableMask : MonoBehaviour
         // _ori_delta = Input.mousePosition;
 
         // transform.Translate(new Vector3(_delta.x, _delta.y, 0), Space.World);
-        transform.position = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
-        transform.position = new Vector3(transform.position.x, transform.position.y, 0);
+        var pos = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
+        transform.position = new Vector3(pos.x, pos.y, 0);
+        // _rb.MovePosition(new Vector3(pos.x, pos.y, 0));
     }
 
-    void OnMouseUp() {
+    void OnMouseUp()
+    {
         _isDragging = false;
     }
     void Update()
     {
-        
+
     }
 
     public bool isInMask(Vector2 worldPos)
@@ -54,3 +59,53 @@ public class DraggableMask : MonoBehaviour
         return _collider.OverlapPoint(worldPos);
     }
 }
+
+// using UnityEngine;
+
+// [RequireComponent(typeof(Rigidbody2D), typeof(Collider2D))]
+// public class DraggableMask : MonoBehaviour
+// {
+//     private Camera _cam;
+//     private Rigidbody2D _rb;
+//     private Vector2 _targetPos;
+//     private bool _dragging;
+//     private Vector2 _offset;
+//     private Collider2D _collider;
+
+//     private void Awake()
+//     {
+//         _cam = Camera.main;
+//         _rb = GetComponent<Rigidbody2D>();
+//         _collider = GetComponent<Collider2D>();
+//     }
+
+//     private void OnMouseDown()
+//     {
+//         _dragging = true;
+//         Vector2 mouseWorld = _cam.ScreenToWorldPoint(Input.mousePosition);
+//         _offset = (Vector2)transform.position - mouseWorld;
+//     }
+
+//     private void OnMouseUp()
+//     {
+//         _dragging = false;
+//     }
+
+//     private void Update()
+//     {
+//         if (!_dragging) return;
+//         Vector2 mouseWorld = _cam.ScreenToWorldPoint(Input.mousePosition);
+//         _targetPos = mouseWorld + _offset;
+//     }
+
+//     private void FixedUpdate()
+//     {
+//         if (!_dragging) return;
+//         _rb.MovePosition(_targetPos);
+//     }
+
+//     public bool isInMask(Vector2 worldPos)
+//     {
+//         return _collider.OverlapPoint(worldPos);
+//     }
+// }

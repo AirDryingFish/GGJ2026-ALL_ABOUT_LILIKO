@@ -345,6 +345,8 @@ namespace Yzz
                 _jumpBufferCounter = 0f;
                 _coyoteCounter = 0f;
                 _hasJumpedSinceGrounded = true;
+                if (players[curIndex].TryGetComponent(out PlayerModel model))
+                    model.TriggerJump();
             }
 
             // Variable jump height & fall gravity
@@ -458,7 +460,7 @@ namespace Yzz
             maskEdgeCollider.enabled = inside;
             // 限频调试：每 20 帧打一次；确认完可注释
             if (Time.frameCount % 20 == 0)
-                Debug.Log($"[MaskEdge] curIndex={curIndex}, worldPoint={worldPoint}, col={colInfo},  inside={inside}, enabled={maskEdgeCollider.enabled}");
+                Debug.Log($"[MaskEdge] curIndex={curIndex}, worldPoint={worldPoint}, col={colInfo}, inside={inside}, enabled={maskEdgeCollider.enabled}, IsGrounded={IsGrounded()}");
         }
 
         private void OnDrawGizmosSelected()

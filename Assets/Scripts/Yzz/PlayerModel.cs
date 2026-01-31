@@ -20,6 +20,7 @@ namespace Yzz
         [SerializeField] private string paramSpeedX = "speedX";
         [SerializeField] private string paramSpeedY = "speedY";
         [SerializeField] private string paramIsGrounded = "isGrounded";
+        [SerializeField] private string paramJump = "jump";
 
         [Header("Thresholds")]
         [Tooltip("水平速度超过此值视为在走路")]
@@ -41,12 +42,13 @@ namespace Yzz
 
             if (!string.IsNullOrEmpty(paramIsWalking))
                 animator.SetBool(paramIsWalking, walking);
-            // if (!string.IsNullOrEmpty(paramSpeedX))
-            //     animator.SetFloat(paramSpeedX, v.x);
-            // if (!string.IsNullOrEmpty(paramSpeedY))
-            //     animator.SetFloat(paramSpeedY, v.y);
-            // if (!string.IsNullOrEmpty(paramIsGrounded))
-            //     animator.SetBool(paramIsGrounded, grounded);
+        }
+
+        /// <summary> 由 MulPlayerController 在起跳时调用，触发 Animator 的 jump trigger。 </summary>
+        public void TriggerJump()
+        {
+            if (animator != null && !string.IsNullOrEmpty(paramJump))
+                animator.SetTrigger(paramJump);
         }
     }
 }

@@ -1083,7 +1083,7 @@ MonoBehaviour:
   groundCheckWidthFactor: 0.162
   groundCheckOffset: {x: 0, y: -0.1}
   minGroundNormalY: 0.5
-  minGroundNormalYCorner: 0.566
+  minGroundNormalYCorner: 0.25
   groundCheckAngleDown: 30
   wallCheckDistance: 0.08
   sprintMultiplier: 1.5

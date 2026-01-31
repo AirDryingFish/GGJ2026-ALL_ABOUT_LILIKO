@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Burst.Intrinsics;
 using UnityEngine;
@@ -54,6 +55,15 @@ namespace Yzz
         [Tooltip("The Mask Object to detect")]
         [SerializeField] private DraggableMask mask;
 
+        [Header("Ground Colliders (按 curIndex 控制 isTrigger)")]
+        [Tooltip("Layer 为 Ground 的物体上的 Collider2D 列表；curIndex=0 时为非 Trigger，curIndex=1 时为 Trigger")]
+        [SerializeField] private Collider2D[] groundLayerColliders;
+        [Tooltip("Layer 为 Ground2 的物体上的 Collider2D 列表；curIndex=1 时为非 Trigger，curIndex=0 时为 Trigger")]
+        [SerializeField] private Collider2D[] ground2LayerColliders;
+
+        private List<Collider2D> _groundLayerCollidersCached = new List<Collider2D>();
+        private List<Collider2D> _ground2LayerCollidersCached = new List<Collider2D>();
+
         [Header("Sprite")]
         [Tooltip("不指定则用同物体上的 SpriteRenderer；向左走时 flipX = true")]
         [SerializeField] private SpriteRenderer[] spriteRenderers;
@@ -62,13 +72,17 @@ namespace Yzz
         // private Collider2D _col;
         private Rigidbody2D[] _rbs;
         private Collider2D[] _cols;
+
+        public Transform judgePoint;
+
+        public EdgeCollider2D maskEdgeCollider;
         private Vector3[] _offsets;
 
         public bool isAllSamePos = true;
 
 
         public GameObject[] players;
-        [SerializeField]private int curIndex = 0;
+        [SerializeField] private int curIndex = 0;
         private Vector2 _spawnPosition;
         private float _coyoteCounter;
 
@@ -77,6 +91,8 @@ namespace Yzz
         private bool _isSprinting;
         /// <summary> 每次着地只允许起跳一次，防止接地判定连续为 true 时重复加跳跃力 </summary>
         private bool _hasJumpedSinceGrounded = true;
+        /// <summary> judgePoint 是否在对应 Ground/Ground2 层内，用于 IsGrounded 时把 Mask 层也算地面 </summary>
+        private bool _isInside;
 
         /// <summary> Model 层 / 动画层可读：当前速度 </summary>
         public Vector2 Velocity => _rbs[curIndex] != null ? _rbs[curIndex].velocity : Vector2.zero;
@@ -95,14 +111,14 @@ namespace Yzz
             _cols = new Collider2D[players.Count()];
             if (spriteRenderers == null)
             {
-                
+
                 spriteRenderers = new SpriteRenderer[players.Count()];
                 for (int i = 0; i < players.Count(); i++)
                 {
                     spriteRenderers[i] = players[i].GetComponentInChildren<SpriteRenderer>();
                 }
             }
-            
+
             for (int i = 0; i < players.Count(); i++)
             {
                 if (!players[i].TryGetComponent(out _cols[i]))
@@ -118,8 +134,12 @@ namespace Yzz
                 _rbs[i].interpolation = RigidbodyInterpolation2D.Interpolate;
                 _rbs[i].collisionDetectionMode = CollisionDetectionMode2D.Continuous;
 
+                // 为每个玩家挂上转发器，碰撞/触发事件才会传到本控制器的 OnPlayerCollision* / OnPlayerTrigger*
+                if (!players[i].TryGetComponent(out PlayerTriggerForwarder forwarder))
+                    forwarder = players[i].AddComponent<PlayerTriggerForwarder>();
+                forwarder.Setup(this, i);
             }
-            
+
             InitTransformOffsets();
             ChangeCur(0);
 
@@ -132,7 +152,7 @@ namespace Yzz
                 return;
             }
             _offsets = new Vector3[players.Count()];
-            for (int i=0;i<players.Count();++i)
+            for (int i = 0; i < players.Count(); ++i)
             {
                 _offsets[i] = players[i].transform.position;
             }
@@ -147,18 +167,28 @@ namespace Yzz
             }
             var v = _rbs[curIndex].velocity;
             var av = _rbs[curIndex].angularVelocity;
-            foreach (var rb in _rbs)
+            // 非当前玩家：Kinematic + simulated = true，且 Collider isTrigger = true（切到 index=1 时 Collider2D[0] 也为 Trigger）
+            for (int i = 0; i < _rbs.Length; i++)
             {
-                rb.velocity = Vector2.zero;
-                rb.angularVelocity = 0f;
-                rb.bodyType = RigidbodyType2D.Kinematic;
-                rb.simulated = false;
+                _rbs[i].velocity = Vector2.zero;
+                _rbs[i].angularVelocity = 0f;
+                _rbs[i].bodyType = RigidbodyType2D.Kinematic;
+                _rbs[i].simulated = true;
+                if (_cols[i] != null) _cols[i].isTrigger = true;
             }
             curIndex = c;
             _rbs[curIndex].velocity = v;
             _rbs[curIndex].angularVelocity = av;
             _rbs[curIndex].bodyType = RigidbodyType2D.Dynamic;
             _rbs[curIndex].simulated = true;
+            if (_cols[curIndex] != null) _cols[curIndex].isTrigger = false; // 当前玩家用物理碰撞
+            // curIndex=0：Ground 层 Collider 非 Trigger，Ground2 层为 Trigger；curIndex=1：Ground 为 Trigger，Ground2 非 Trigger
+            bool groundAsTrigger = c != 0;
+            for (int i = 0; i < _groundLayerCollidersCached.Count; i++)
+                _groundLayerCollidersCached[i].isTrigger = groundAsTrigger;
+            bool ground2AsTrigger = c != 1;
+            for (int i = 0; i < _ground2LayerCollidersCached.Count; i++)
+                _ground2LayerCollidersCached[i].isTrigger = ground2AsTrigger;
         }
         private void SyncTransform()
         {
@@ -186,16 +216,29 @@ namespace Yzz
         private void Awake()
         {
             InitPlayers();
-            
+
             // 保存初始出生点，跌落重生时回到此位置
             _spawnPosition = players[curIndex].transform.position;
-           
+
+            CacheGroundColliders();
 
             if (mask == null)
             {
                 Debug.LogError("Mask object is null");
             }
 
+        }
+
+        private void CacheGroundColliders()
+        {
+            _groundLayerCollidersCached.Clear();
+            if (groundLayerColliders != null)
+                for (int i = 0; i < groundLayerColliders.Length; i++)
+                    if (groundLayerColliders[i] != null) _groundLayerCollidersCached.Add(groundLayerColliders[i]);
+            _ground2LayerCollidersCached.Clear();
+            if (ground2LayerColliders != null)
+                for (int i = 0; i < ground2LayerColliders.Length; i++)
+                    if (ground2LayerColliders[i] != null) _ground2LayerCollidersCached.Add(ground2LayerColliders[i]);
         }
 
 
@@ -224,23 +267,26 @@ namespace Yzz
             // 朝左走时 flipX，朝右走时不 flip
             if (spriteRenderers != null)
             {
-                
+
 
                 foreach (var sr in spriteRenderers)
                 {
                     if (_inputX < 0f)
                     {
                         sr.flipX = true;
-                    } else if (_inputX > 0f) {
+                    }
+                    else if (_inputX > 0f)
+                    {
                         sr.flipX = false;
                     }
                 }
-                
-                
+
+
             }
 
             SyncTransform();
-            
+            print("curIndex: " + curIndex);
+
         }
 
         private void FixedUpdate()
@@ -269,7 +315,7 @@ namespace Yzz
                     players[curIndex].transform.position = _spawnPosition;
                 else
                 {
-                    var dd = _offsets[curIndex]-_offsets[0];
+                    var dd = _offsets[curIndex] - _offsets[0];
                     players[curIndex].transform.position = _spawnPosition + (Vector2)dd;
                 }
                 _coyoteCounter = coyoteTime;
@@ -277,6 +323,8 @@ namespace Yzz
                 _hasJumpedSinceGrounded = false;
                 return;
             }
+
+            RefreshMaskEdgeColliderFromJudgePoint();
 
             bool grounded = IsGrounded();
             bool wallLeft = CheckWall(-1);
@@ -315,13 +363,16 @@ namespace Yzz
             else
                 _rbs[curIndex].gravityScale = gravityScale;
 
-            
+
         }
 
         private bool IsGrounded()
         {
             Vector2 origin = (Vector2)players[curIndex].transform.position + groundCheckOffset;
-            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, groundLayers[curIndex]);
+            LayerMask layers = groundLayers[curIndex];
+            if (_isInside)
+                layers |= LayerMask.GetMask("Mask");
+            RaycastHit2D hit = Physics2D.Raycast(origin, Vector2.down, groundCheckDistance, layers);
             if (!hit) return false;
             if (_cols[curIndex] != null && hit.collider == _cols[curIndex]) return false;
             // 只算“脚下方、表面朝上”的地面，贴墙时墙的法线是水平的，不会判成地面，避免卡墙不下落
@@ -342,8 +393,85 @@ namespace Yzz
             return true;
         }
 
+        // ----- 触发器回调（两个玩家 Collider2D 的触发事件会转发到这里） -----
+        // 使用前请在对应玩家的 Collider2D 上勾选 Is Trigger；需要物理碰撞则保留一个非 Trigger 的 Collider，再另加一个 Trigger 的 Collider。
+
+        /// <summary> 某玩家的触发器内有物体进入时调用。playerIndex 为 players 数组下标，other 为进入的碰撞体。 </summary>
+        public virtual void OnPlayerTriggerEnter(int playerIndex, Collider2D other)
+        {
+            // 可在此处理：拾取物、机关、传送门等
+            // 例：if (other.CompareTag("Coin")) { ... }
+        }
+
+        /// <summary> 某玩家的触发器内有物体停留时每帧调用。 </summary>
+        public virtual void OnPlayerTriggerStay(int playerIndex, Collider2D other)
+        {
+        }
+
+        /// <summary> 某玩家的触发器内有物体离开时调用。 </summary>
+        public virtual void OnPlayerTriggerExit(int playerIndex, Collider2D other)
+        {
+        }
+
+        // ----- 碰撞回调（两边都是非 Trigger 的 Collider2D 时：站在地面、贴墙等） -----
+        // Kinematic 与 Dynamic 接触时也会触发，两个玩家的 Collider2D 都能收到。
+
+        /// <summary> 某玩家与其它物体发生物理接触时调用。playerIndex 为 players 数组下标，collision 含接触点、法线等。 </summary>
+        public virtual void OnPlayerCollisionEnter(int playerIndex, Collision2D collision)
+        {
+            // 例：if (collision.collider.CompareTag("Platform")) { ... }
+        }
+
+        /// <summary> maskEdgeCollider 的开关改由 Trigger 控制，不再用 CollisionStay。 </summary>
+        public virtual void OnPlayerCollisionStay(int playerIndex, Collision2D collision)
+        {
+        }
+
+        /// <summary> 某玩家与其它物体脱离接触时调用。 </summary>
+        public virtual void OnPlayerCollisionExit(int playerIndex, Collision2D collision)
+        {
+        }
+
+        /// <summary> 用 judgePoint + OverlapPoint(Ground/Ground2) 判断是否在对应层内；Default 层的碰撞体过滤掉，不参与判断。 </summary>
+        private void RefreshMaskEdgeColliderFromJudgePoint()
+        {
+            if (maskEdgeCollider == null || judgePoint == null) return;
+            Vector2 worldPoint = judgePoint.position;
+            int defaultLayer = LayerMask.NameToLayer("Default");
+            bool inside = false;
+            string colInfo = "null";
+            if (curIndex == 1)
+            {
+                LayerMask groundMask = LayerMask.GetMask("Ground");
+                Collider2D col = Physics2D.OverlapPoint(worldPoint, groundMask);
+                inside = col != null;
+                colInfo = col != null ? $"{col.name}(layer={LayerMask.LayerToName(col.gameObject.layer)})" : "null";
+                if (Time.frameCount % 20 == 0)
+                    Debug.Log($"[isInside] curIndex=1 → 用 Ground 层 | worldPoint={worldPoint} | OverlapPoint 命中={col != null} | col={colInfo} → inside={inside}");
+            }
+            else if (curIndex == 0)
+            {
+                LayerMask ground2Mask = LayerMask.GetMask("Ground2");
+                Collider2D col = Physics2D.OverlapPoint(worldPoint, ground2Mask);
+                inside = col != null;
+                colInfo = col != null ? $"{col.name}(layer={LayerMask.LayerToName(col.gameObject.layer)})" : "null";
+                if (Time.frameCount % 20 == 0)
+                    Debug.Log($"[isInside] curIndex=0 → 用 Ground2 层 | worldPoint={worldPoint} | OverlapPoint 命中={col != null} | col={colInfo} → inside={inside}");
+            }
+            else if (Time.frameCount % 20 == 0)
+            {
+                Debug.Log($"[isInside] curIndex={curIndex} 不在 0/1，未检测层 → inside 保持 false");
+            }
+            _isInside = inside;
+            maskEdgeCollider.enabled = inside;
+            // 限频调试：每 20 帧打一次；确认完可注释
+            if (Time.frameCount % 20 == 0)
+                Debug.Log($"[MaskEdge] curIndex={curIndex}, worldPoint={worldPoint}, col={colInfo},  inside={inside}, enabled={maskEdgeCollider.enabled}");
+        }
+
         private void OnDrawGizmosSelected()
         {
+            if (players == null || curIndex >= players.Length) return;
             Vector2 origin = (Vector2)players[curIndex].transform.position + groundCheckOffset;
             Gizmos.color = IsGrounded() ? Color.green : Color.red;
             Gizmos.DrawLine(origin, origin + Vector2.down * groundCheckDistance);

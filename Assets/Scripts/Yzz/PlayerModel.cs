@@ -1,3 +1,4 @@
+using Unity.Mathematics;
 using UnityEngine;
 
 namespace Yzz
@@ -49,9 +50,9 @@ namespace Yzz
             if (!string.IsNullOrEmpty(paramIsWalking))
                 animator.SetBool(paramIsWalking, walking);
             if (!string.IsNullOrEmpty(paramSpeedX))
-                animator.SetFloat(paramSpeedX, v.x);
+                animator.SetFloat(paramSpeedX, math.abs(v.x));
             if (!string.IsNullOrEmpty(paramSpeedY))
-                animator.SetFloat(paramSpeedY, v.y);
+                animator.SetFloat(paramSpeedY, math.abs(v.y));
             if (!string.IsNullOrEmpty(paramIsGrounded))
                 animator.SetBool(paramIsGrounded, grounded);
         }

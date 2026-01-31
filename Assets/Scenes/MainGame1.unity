@@ -510,7 +510,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &211491970
 GameObject:
@@ -640,7 +640,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &226017884
 GameObject:
@@ -770,7 +770,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &397097294
 GameObject:
@@ -1675,7 +1675,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &726088352
 GameObject:
@@ -1805,7 +1805,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &740806307
 GameObject:
@@ -1935,7 +1935,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &754075154
 GameObject:
@@ -2150,7 +2150,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 1
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!114 &765922292
 MonoBehaviour:
@@ -2324,7 +2324,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &936533321
 GameObject:
@@ -2745,7 +2745,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &1126235500
 GameObject:
@@ -2932,7 +2932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f72002e9ef1e4d445ad7033751c4f62f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  smiTo: 2
+  smiTo: 1
 --- !u!210 &1133508789
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -4607,7 +4607,7 @@ SpriteRenderer:
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
-  m_MaskInteraction: 2
+  m_MaskInteraction: 1
   m_SpriteSortPoint: 0
 --- !u!1 &2016769312
 GameObject:

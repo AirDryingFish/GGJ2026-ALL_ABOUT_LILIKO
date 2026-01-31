@@ -99,6 +99,8 @@ namespace Yzz
         /// <summary> Model 层 / 动画层可读：是否在地面 </summary>
         public bool IsGroundedState => IsGrounded();
 
+        public AudioSource jumpSound, warpSound;
+
         private void InitPlayers()
         {
             if (groundLayers.Count() != players.Count())
@@ -292,13 +294,18 @@ namespace Yzz
             if (mask.isInMask(players[curIndex].transform.position))
             {
                 if (curIndex != 1)
+                {
+                    warpSound.Play();
                     ChangeCur(1);
-
-            }
-            else
+                }
+                
+            } else
             {
                 if (curIndex != 0)
+                {
+                    warpSound.Play();
                     ChangeCur(0);
+                }
             }
             // 跌落重生：低于阈值则传回初始位置并重置速度/计时
             if (players[curIndex].transform.position.y < respawnY)
@@ -345,8 +352,7 @@ namespace Yzz
                 _jumpBufferCounter = 0f;
                 _coyoteCounter = 0f;
                 _hasJumpedSinceGrounded = true;
-                if (players[curIndex].TryGetComponent(out PlayerModel model))
-                    model.TriggerJump();
+                jumpSound.Play();
             }
 
             // Variable jump height & fall gravity
@@ -460,7 +466,7 @@ namespace Yzz
             maskEdgeCollider.enabled = inside;
             // 限频调试：每 20 帧打一次；确认完可注释
             if (Time.frameCount % 20 == 0)
-                Debug.Log($"[MaskEdge] curIndex={curIndex}, worldPoint={worldPoint}, col={colInfo}, inside={inside}, enabled={maskEdgeCollider.enabled}, IsGrounded={IsGrounded()}");
+                Debug.Log($"[MaskEdge] curIndex={curIndex}, worldPoint={worldPoint}, col={colInfo},  inside={inside}, enabled={maskEdgeCollider.enabled}");
         }
 
         private void OnDrawGizmosSelected()

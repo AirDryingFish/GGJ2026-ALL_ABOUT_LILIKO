@@ -19,9 +19,11 @@ public class DraggableMask : MonoBehaviour
 
 
     public Vector2 epsilon = new(0.001f, 0.001f);
-    public float maxSpeed = 20f;
+    public float maxSpeed = 25f;
     [SerializeField]
     private Vector2 target;
+
+    public bool isInsideGround = false;
 
     void Awake()
     {
@@ -38,12 +40,15 @@ public class DraggableMask : MonoBehaviour
     void OnMouseDrag()
     {
         _isDragging = true;
-        // _delta = cam.ScreenToWorldPoint(Input.mousePosition) - cam.ScreenToWorldPoint(_ori_delta);
+        var pos = cam.ScreenToWorldPoint(Input.mousePosition) - cam.ScreenToWorldPoint(_ori_delta);
         // _ori_delta = Input.mousePosition;
 
         // transform.Translate(new Vector3(_delta.x, _delta.y, 0), Space.World);
         // target = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
-        // transform.position = new Vector3(pos.x, pos.y, 0);
+        if (!isInsideGround)
+        {
+            // transform.position = new Vector3(pos.x, pos.y, 0);
+        }
         // _rb.MovePosition(new Vector3(pos.x, pos.y, 0));
     }
 
@@ -60,9 +65,17 @@ public class DraggableMask : MonoBehaviour
     {
         if (_isDragging)
         {
-            Vector2 next = Vector2.MoveTowards(_rb.position, target, maxSpeed * Time.fixedDeltaTime);
-            
-            _rb.MovePosition(next);
+            if (isInsideGround)
+            {
+                Vector2 next = Vector2.MoveTowards(_rb.position, target, maxSpeed * Time.fixedDeltaTime);
+
+                _rb.MovePosition(next);
+            } else
+            {
+                _rb.MovePosition(target);
+
+                
+            }
         }
     }
 

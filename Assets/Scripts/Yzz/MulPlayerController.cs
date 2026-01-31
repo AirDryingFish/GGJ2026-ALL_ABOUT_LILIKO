@@ -485,6 +485,7 @@ namespace Yzz
                 Debug.Log($"[isInside] curIndex={curIndex} 不在 0/1，未检测层 → inside 保持 false");
             }
             _isInside = inside;
+            mask.isInsideGround = inside;
             maskEdgeCollider.enabled = inside;
             // 限频调试：每 20 帧打一次；确认完可注释
             if (Time.frameCount % 20 == 0)

@@ -77,6 +77,7 @@ namespace Yzz
         private Collider2D[] _cols;
 
         public Transform judgePoint;
+        public Transform judgePointM;
 
         public EdgeCollider2D maskEdgeCollider;
         private Vector3[] _offsets;
@@ -295,7 +296,7 @@ namespace Yzz
 
         private void FixedUpdate()
         {
-            if (mask.isInMask(players[curIndex].transform.position))
+            if (mask.isInMask(judgePointM.position))
             {
                 if (curIndex != 1)
                 {
@@ -490,12 +491,12 @@ namespace Yzz
                 Debug.Log($"[MaskEdge] curIndex={curIndex}, worldPoint={worldPoint}, col={colInfo},  inside={inside}, enabled={maskEdgeCollider.enabled}");
         }
 
-        private void OnDrawGizmosSelected()
-        {
-            if (players == null || curIndex >= players.Length) return;
-            Vector2 origin = (Vector2)players[curIndex].transform.position + groundCheckOffset;
-            Gizmos.color = IsGrounded() ? Color.green : Color.red;
-            Gizmos.DrawLine(origin, origin + Vector2.down * groundCheckDistance);
-        }
+        // private void OnDrawGizmosSelected()
+        // {
+        //     if (players == null || curIndex >= players.Length) return;
+        //     Vector2 origin = (Vector2)players[curIndex].transform.position + groundCheckOffset;
+        //     Gizmos.color = IsGrounded() ? Color.green : Color.red;
+        //     Gizmos.DrawLine(origin, origin + Vector2.down * groundCheckDistance);
+        // }
     }
 }

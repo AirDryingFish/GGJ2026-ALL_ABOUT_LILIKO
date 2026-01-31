@@ -1052,6 +1052,7 @@ Transform:
   m_Children:
   - {fileID: 1622556223}
   - {fileID: 2116372961}
+  - {fileID: 773810152}
   m_Father: {fileID: 1417173514}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &563763684
@@ -1113,6 +1114,7 @@ MonoBehaviour:
   - {fileID: 1622556226}
   - {fileID: 865971327}
   judgePoint: {fileID: 2116372961}
+  judgePointM: {fileID: 773810152}
   maskEdgeCollider: {fileID: 1529822866}
   isAllSamePos: 1
   players:
@@ -2157,6 +2159,37 @@ MonoBehaviour:
   parallaxX: 0.3
   parallaxY: 0.3
   startOffset: {x: 0, y: 0, z: 0}
+--- !u!1 &773810151
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 773810152}
+  m_Layer: 8
+  m_Name: JudgePointM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &773810152
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 773810151}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.123, y: 1.02, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 563763683}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &865971323
 GameObject:
   m_ObjectHideFlags: 0
@@ -3865,7 +3898,8 @@ MonoBehaviour:
   _delta: {x: 0, y: 0}
   _isDragging: 0
   epsilon: {x: 0.001, y: 0.001}
-  deceleration: 12
+  maxSpeed: 20
+  target: {x: 0, y: 0}
 --- !u!50 &1625244230
 Rigidbody2D:
   serializedVersion: 4

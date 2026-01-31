@@ -2898,6 +2898,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1135399273}
   - component: {fileID: 1135399272}
+  - component: {fileID: 1135399274}
   m_Layer: 0
   m_Name: PassPoint
   m_TagString: Untagged
@@ -2956,6 +2957,20 @@ Transform:
   - {fileID: 400808708}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1135399274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1135399271}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7053ec6abcc234b4f8e3c965023db0e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelIndex: 1
+  nextLevelSceneName: EP2
 --- !u!1 &1196237900
 GameObject:
   m_ObjectHideFlags: 0

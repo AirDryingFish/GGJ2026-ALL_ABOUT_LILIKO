@@ -19,7 +19,9 @@ public class DraggableMask : MonoBehaviour
 
 
     public Vector2 epsilon = new(0.001f, 0.001f);
-    public float deceleration = 12f;
+    public float maxSpeed = 20f;
+    [SerializeField]
+    private Vector2 target;
 
     void Awake()
     {
@@ -40,8 +42,8 @@ public class DraggableMask : MonoBehaviour
         // _ori_delta = Input.mousePosition;
 
         // transform.Translate(new Vector3(_delta.x, _delta.y, 0), Space.World);
-        var pos = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
-        transform.position = new Vector3(pos.x, pos.y, 0);
+        // target = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
+        // transform.position = new Vector3(pos.x, pos.y, 0);
         // _rb.MovePosition(new Vector3(pos.x, pos.y, 0));
     }
 
@@ -51,7 +53,17 @@ public class DraggableMask : MonoBehaviour
     }
     void Update()
     {
+        target = cam.ScreenToWorldPoint(Input.mousePosition) - _ori_delta;
 
+    }
+    void FixedUpdate()
+    {
+        if (_isDragging)
+        {
+            Vector2 next = Vector2.MoveTowards(_rb.position, target, maxSpeed * Time.fixedDeltaTime);
+            
+            _rb.MovePosition(next);
+        }
     }
 
     public bool isInMask(Vector2 worldPos)

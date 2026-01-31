@@ -103,6 +103,8 @@ namespace Yzz
         /// <summary> Model 层 / 动画层可读：是否在地面 </summary>
         public bool IsGroundedState => IsGrounded();
 
+        public PlayerModel[] playerModels;
+
 
         public AudioSource jumpSound, warpSound;
 
@@ -359,8 +361,10 @@ namespace Yzz
                 _coyoteCounter = 0f;
                 _hasJumpedSinceGrounded = true;
                 jumpSound.Play();
-                if (players[curIndex].TryGetComponent(out PlayerModel playerModel))
+                foreach (var playerModel in playerModels)
+                {
                     playerModel.TriggerJump();
+                }
             }
 
             // Variable jump height & fall gravity

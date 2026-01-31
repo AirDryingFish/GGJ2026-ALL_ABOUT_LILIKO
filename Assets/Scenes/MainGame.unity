@@ -1121,6 +1121,9 @@ MonoBehaviour:
   - {fileID: 563763682}
   - {fileID: 1123347236}
   curIndex: 0
+  playerModels:
+  - {fileID: 1622556224}
+  - {fileID: 865971325}
   jumpSound: {fileID: 563763688}
   warpSound: {fileID: 563763687}
 --- !u!50 &563763685
@@ -3900,6 +3903,7 @@ MonoBehaviour:
   epsilon: {x: 0.001, y: 0.001}
   maxSpeed: 20
   target: {x: 0, y: 0}
+  isInsideGround: 0
 --- !u!50 &1625244230
 Rigidbody2D:
   serializedVersion: 4

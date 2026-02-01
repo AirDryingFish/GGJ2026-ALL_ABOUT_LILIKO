@@ -239,7 +239,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61481886}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: e4accb70acd3a0a4db290014d8b9096b, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: e8c32c67b7a00ca4680481df345c64e4, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 24526111}
@@ -974,7 +974,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 278655673}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 09e28512697b8c7459a714b4465b3924, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: 06df0b9b33249944ca3e0b6c26d1d8b6, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 24526111}
@@ -988,12 +988,14 @@ VideoPlayer:
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
-  m_TargetAudioSources: []
-  m_DirectAudioVolumes: []
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
   m_Url: 
-  m_EnabledAudioTracks: 
-  m_DirectAudioMutes: 
-  m_ControlledAudioTrackCount: 0
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
   m_Looping: 0
@@ -3152,7 +3154,7 @@ MonoBehaviour:
   levelBgmClips:
   - {fileID: 8300000, guid: f47f3ccfcf19bb54bbd6236ca64cc15f, type: 3}
   - {fileID: 8300000, guid: 99cb2afd37be1044db274892a35e39e7, type: 3}
-  - {fileID: 0}
+  - {fileID: 8300000, guid: 09203526f5ec12b4d855b53def4260f3, type: 3}
   levelSceneNames:
   - MainGame1
   - MainGame2
@@ -5460,11 +5462,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rawImage1: {fileID: 1978232280}
   videoPlayer1: {fileID: 278655674}
-  duration1: 5
+  duration1: 2
   rawImage2: {fileID: 942092851}
   videoPlayer2: {fileID: 61481887}
   duration2: 10
-  fadeOutStartTime: 5
+  fadeOutStartTime: 5.5
   fadeOutDuration: 2
   openingContainer: {fileID: 729900191}
   bgmClip: {fileID: 8300000, guid: aa0af3ad6f0e0634ca0d8dd8cbfd6267, type: 3}

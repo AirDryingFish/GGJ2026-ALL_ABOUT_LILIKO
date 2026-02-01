@@ -22,6 +22,10 @@ namespace Yzz
         [SerializeField] private VideoPlayer videoPlayer2;
         [Tooltip("第二组显示秒数，到时后 deactivate")]
         [SerializeField] private float duration2 = 5f;
+        [Tooltip("第二组从开始播放起多少秒后开始渐隐；小于 0 表示不渐隐")]
+        [SerializeField] private float fadeOutStartTime = -1f;
+        [Tooltip("第二组渐隐时长（秒）")]
+        [SerializeField] private float fadeOutDuration = 1.5f;
 
         [Header("可选")]
         [Tooltip("播开场期间不激活；两段都播完后设为 active。不填则不处理。")]
@@ -41,7 +45,7 @@ namespace Yzz
         {
             // 播开场期间不激活 openingContainer，只控制两组 RawImage/VideoPlayer
 
-            // 第一组：active -> 播放 -> 指定秒数 -> deactive
+            // 第一组：active -> 播放 -> 指定秒数
             if (rawImage1 != null) rawImage1.gameObject.SetActive(true);
             if (videoPlayer1 != null)
             {
@@ -49,18 +53,46 @@ namespace Yzz
                 videoPlayer1.Play();
             }
             yield return new WaitForSeconds(duration1);
-            if (rawImage1 != null) rawImage1.gameObject.SetActive(false);
-            if (videoPlayer1 != null) videoPlayer1.gameObject.SetActive(false);
 
-            // 第二组：active -> 播放 -> 指定秒数 -> deactive
-            if (rawImage2 != null) rawImage2.gameObject.SetActive(true);
+            // 先激活并播放第二组（盖在上面），再 deactivate 第一组，避免切换时出现白屏
+            if (rawImage2 != null)
+            {
+                rawImage2.gameObject.SetActive(true);
+                Color c = rawImage2.color;
+                c.a = 1f;
+                rawImage2.color = c;
+            }
             if (videoPlayer2 != null)
             {
                 videoPlayer2.gameObject.SetActive(true);
                 videoPlayer2.Play();
             }
-            yield return new WaitForSeconds(duration2);
-            if (rawImage2 != null) rawImage2.gameObject.SetActive(false);
+            yield return null; // 等一帧让第二组开始渲染
+            if (rawImage1 != null) rawImage1.gameObject.SetActive(false);
+            if (videoPlayer1 != null) videoPlayer1.gameObject.SetActive(false);
+
+            // 第二组显示指定秒数，从 fadeOutStartTime 起渐隐
+            float elapsed = 0f;
+            float fadeStart = fadeOutStartTime >= 0f ? fadeOutStartTime : duration2 + 1f;
+            while (elapsed < duration2)
+            {
+                elapsed += Time.deltaTime;
+                if (rawImage2 != null && fadeOutDuration > 0f && elapsed >= fadeStart)
+                {
+                    float t = Mathf.Clamp01((elapsed - fadeStart) / fadeOutDuration);
+                    Color c = rawImage2.color;
+                    c.a = 1f - t;
+                    rawImage2.color = c;
+                }
+                yield return null;
+            }
+            if (rawImage2 != null)
+            {
+                Color c = rawImage2.color;
+                c.a = 0f;
+                rawImage2.color = c;
+                rawImage2.gameObject.SetActive(false);
+            }
             if (videoPlayer2 != null) videoPlayer2.gameObject.SetActive(false);
 
             if (openingContainer != null)

@@ -158,7 +158,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
-  m_BackGroundColor: {r: 1, g: 1, b: 1, a: 0}
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -239,7 +239,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 61481886}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 43236e6d2a721e045a555f02d69af620, type: 3}
+  m_VideoClip: {fileID: 32900000, guid: e4accb70acd3a0a4db290014d8b9096b, type: 3}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 24526111}
@@ -253,12 +253,14 @@ VideoPlayer:
   m_TimeUpdateMode: 2
   m_PlaybackSpeed: 1
   m_AudioOutputMode: 2
-  m_TargetAudioSources: []
-  m_DirectAudioVolumes: []
+  m_TargetAudioSources:
+  - {fileID: 0}
+  m_DirectAudioVolumes:
+  - 1
   m_Url: 
-  m_EnabledAudioTracks: 
-  m_DirectAudioMutes: 
-  m_ControlledAudioTrackCount: 0
+  m_EnabledAudioTracks: 01
+  m_DirectAudioMutes: 00
+  m_ControlledAudioTrackCount: 1
   m_PlayOnAwake: 1
   m_SkipOnDrop: 1
   m_Looping: 0
@@ -5458,10 +5460,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   rawImage1: {fileID: 1978232280}
   videoPlayer1: {fileID: 278655674}
-  duration1: 2
+  duration1: 5
   rawImage2: {fileID: 942092851}
   videoPlayer2: {fileID: 61481887}
-  duration2: 5
+  duration2: 10
+  fadeOutStartTime: 5
+  fadeOutDuration: 2
   openingContainer: {fileID: 729900191}
   bgmClip: {fileID: 8300000, guid: aa0af3ad6f0e0634ca0d8dd8cbfd6267, type: 3}
 --- !u!4 &2033010454

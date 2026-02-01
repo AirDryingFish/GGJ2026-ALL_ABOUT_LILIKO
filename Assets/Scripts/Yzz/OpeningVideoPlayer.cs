@@ -8,6 +8,7 @@ namespace Yzz
 {
     /// <summary>
     /// 开场视频控制器：两组（每组 RawImage + VideoPlayer），先激活第一组、指定秒数后 deactivate，再激活第二组、指定秒数后 deactivate，最后触发回调。
+    /// 若第一组无声音：1) 脚本已改为激活后等一帧再 Play；2) 在 Inspector 里两个 VideoPlayer 的 Audio Output Mode 都设为 Audio Source，并指定同一个或各自的 AudioSource。
     /// </summary>
     public class OpeningVideoPlayer : MonoBehaviour
     {
@@ -45,11 +46,12 @@ namespace Yzz
         {
             // 播开场期间不激活 openingContainer，只控制两组 RawImage/VideoPlayer
 
-            // 第一组：active -> 播放 -> 指定秒数
+            // 第一组：先激活，等一帧让 AudioSource 就绪后再 Play（否则第一组常无声音）
             if (rawImage1 != null) rawImage1.gameObject.SetActive(true);
             if (videoPlayer1 != null)
             {
                 videoPlayer1.gameObject.SetActive(true);
+                yield return null; // 等一帧再播，避免刚激活时音频未初始化
                 videoPlayer1.Play();
             }
             yield return new WaitForSeconds(duration1);

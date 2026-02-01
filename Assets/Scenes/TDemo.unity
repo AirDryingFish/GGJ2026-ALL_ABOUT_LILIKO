@@ -215,6 +215,7 @@ MonoBehaviour:
   - {fileID: 73635225}
   - {fileID: 424664198}
   curIndex: 0
+  animatorGroundedGraceAfterJump: 0.12
   playerModels:
   - {fileID: 1634382420}
   - {fileID: 1577585821}
@@ -421,7 +422,7 @@ Transform:
   m_GameObject: {fileID: 73635225}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 76.8, y: -0.3, z: 0.18467943}
+  m_LocalPosition: {x: 127.71, y: 2.2, z: 0.18467943}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -3409,8 +3410,11 @@ MonoBehaviour:
   levelIndex: 1
   nextLevelSceneName: MainGame2
   keeps: []
+  curEndT: {fileID: 0}
+  nextStartT: {fileID: 0}
   curEnd: {x: 0, y: 0, z: 0}
   nextStart: {x: 0, y: 0, z: 0}
+  curMask: {fileID: 0}
 --- !u!58 &1099628484
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -4196,7 +4200,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.3484497, y: -9.729176}
@@ -4228,8 +4232,11 @@ MonoBehaviour:
   nextLevelSceneName: MainGame2
   keeps:
   - {fileID: 1310729174}
+  curEndT: {fileID: 1385651425}
+  nextStartT: {fileID: 1829162936}
   curEnd: {x: 0, y: 0, z: 0}
   nextStart: {x: 0, y: 0, z: 0}
+  curMask: {fileID: 1370995301}
 --- !u!212 &1354643520
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -4441,7 +4448,7 @@ Transform:
   m_GameObject: {fileID: 1370995299}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 132.3, y: 3.4, z: 0}
+  m_LocalPosition: {x: 187.43, y: 3.69, z: 0}
   m_LocalScale: {x: 16.1, y: 9.91, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -4844,6 +4851,7 @@ MonoBehaviour:
   mulPlayerController: {fileID: 73635226}
   animator: {fileID: 1577585822}
   paramIsWalking: isWalking
+  paramIsRunning: isRunning
   paramSpeedX: speedX
   paramSpeedY: speedY
   paramIsGrounded: isGrounded
@@ -4968,6 +4976,7 @@ MonoBehaviour:
   mulPlayerController: {fileID: 73635226}
   animator: {fileID: 1634382421}
   paramIsWalking: isWalking
+  paramIsRunning: isRunning
   paramSpeedX: speedX
   paramSpeedY: speedY
   paramIsGrounded: isGrounded

@@ -19,6 +19,8 @@ namespace Yzz
         public Transform[] keeps;
 
 
+        public Transform curEndT;
+        public Transform nextStartT;
         public Vector3 curEnd;
         public Vector3 nextStart;
         public DraggableMask curMask;
@@ -50,6 +52,8 @@ namespace Yzz
 
         private void recordMask()
         {
+            curEnd = curEndT.position;
+            nextStart = nextStartT.position;
             curMaskPos = curMask.transform.position;
             curMaskEuler = curMask.transform.eulerAngles;
             curMaskScale = curMask.transform.localScale;
@@ -60,6 +64,7 @@ namespace Yzz
 
         private void syncMask()
         {
+            print("hahaha");
             DraggableMask nextmask = FindFirstObjectByType<DraggableMask>();
             nextmask.transform.position = curMaskPos;
             nextmask.transform.eulerAngles = curMaskEuler;

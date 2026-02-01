@@ -25,6 +25,9 @@ namespace Yzz
         private Vector3 curMaskPos;
         private Vector3 curMaskEuler;
         private Vector3 curMaskScale;
+        private Vector3 curCamPos;
+        private Vector3 curCamEuler;
+        private Vector3 curCamScale;
 
         private void OnTriggerEnter2D(Collider2D other)
         {
@@ -50,6 +53,9 @@ namespace Yzz
             curMaskPos = curMask.transform.position;
             curMaskEuler = curMask.transform.eulerAngles;
             curMaskScale = curMask.transform.localScale;
+            curCamPos = Camera.main.transform.position;
+            curCamEuler = Camera.main.transform.eulerAngles;
+            curCamScale = Camera.main.transform.localScale;
         }
 
         private void syncMask()
@@ -58,11 +64,26 @@ namespace Yzz
             nextmask.transform.position = curMaskPos;
             nextmask.transform.eulerAngles = curMaskEuler;
             nextmask.transform.localScale = curMaskScale;
+            Camera.main.transform.position = curCamPos;
+            Camera.main.transform.eulerAngles = curCamEuler;
+            Camera.main.transform.localScale = curCamScale;
+
+            nextmask.transform.position +=  nextStart-curEnd;
+            Camera.main.transform.position +=  nextStart-curEnd;
+            
         }
 
+        private void ClearTran(Scene s, LoadSceneMode m)
+        {
+            foreach (var item in keeps)
+            {
+                item.gameObject.SetActive(false);
+            }
+        }
         private void OnSceneLoad(Scene s, LoadSceneMode m)
         {
             SceneManager.sceneLoaded -= OnSceneLoad;
+            SceneManager.sceneLoaded += ClearTran;
             syncMask();
             foreach (var item in keeps)
             {

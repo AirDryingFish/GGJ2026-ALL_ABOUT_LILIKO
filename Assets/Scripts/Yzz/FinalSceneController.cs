@@ -109,7 +109,9 @@ namespace Yzz
             yield return FadeToAlpha(image2Panel, 0f, fadeDuration);
             DeactivatePanelAndRawImage(image2Panel);
 
-            // 4. 回到 BeginScene
+            // 4. 关掉 BGM 再回到 BeginScene，直到主界面开场播完再由 OpeningVideoPlayer 播主界面 BGM
+            if (MusicManager.Instance != null)
+                MusicManager.Instance.StopBGM();
             if (!string.IsNullOrEmpty(beginSceneName))
                 SceneManager.LoadScene(beginSceneName);
         }

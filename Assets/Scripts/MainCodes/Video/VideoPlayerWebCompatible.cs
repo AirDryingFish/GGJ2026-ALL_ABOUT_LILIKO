@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +36,28 @@ public class VideoPlayerWebCompatible : MonoBehaviour
             vp.clip = clip;
         }
 #endif
+        ProcessAutoPlay();
+    }
+
+    private void ProcessAutoPlay()
+    {
+        if (!vp.playOnAwake)
+        {
+            return;
+        }
+        if (vp.waitForFirstFrame)
+        {
+            vp.Prepare();
+            vp.prepareCompleted += OnVPPrepared;
+            return;
+        }
+        vp.Play();
+    }
+
+    private void OnVPPrepared(VideoPlayer source)
+    {
+        source.prepareCompleted -= OnVPPrepared;
+        source.Play();
     }
 
 }

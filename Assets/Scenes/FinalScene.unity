@@ -522,6 +522,7 @@ GameObject:
   m_Component:
   - component: {fileID: 746998995}
   - component: {fileID: 746998994}
+  - component: {fileID: 746998996}
   m_Layer: 0
   m_Name: videoplayer
   m_TagString: Untagged
@@ -537,7 +538,7 @@ VideoPlayer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 746998993}
   m_Enabled: 1
-  m_VideoClip: {fileID: 32900000, guid: 645540461807b0c4fa438c4051f834b4, type: 3}
+  m_VideoClip: {fileID: 0}
   m_TargetCameraAlpha: 1
   m_TargetCamera3DLayout: 0
   m_TargetCamera: {fileID: 0}
@@ -578,6 +579,22 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &746998996
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 746998993}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 53ee22a74fe4db24693f1f347b5b757b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vp: {fileID: 746998994}
+  webglCompatiblePath: endgame.mp4
+  clip: {fileID: 32900000, guid: 645540461807b0c4fa438c4051f834b4, type: 3}
+  useClip: 1
 --- !u!1 &1401451606
 GameObject:
   m_ObjectHideFlags: 0
